@@ -3,7 +3,7 @@
 %        Instrumentation and Measurement Research Group       %
 %                    University of Padova                     %
 %-----------------------------%%-----------------------------%%
-function[p1,p2]=frequency_analysis(ppg1,ppg2,xr_1,xr_2)
+function[spectrum1 ,spectrum2,spectrum_denoised1 ,spectrum_denoised2, p1,p2]=frequency_analysis(ppg1,ppg2,xr_1,xr_2)
    
     fS=125;                 
     Nfft=2^13;                                                             
@@ -14,8 +14,10 @@ function[p1,p2]=frequency_analysis(ppg1,ppg2,xr_1,xr_2)
     Xr_1=abs(fft(xr_1.*w,Nfft)/sum(w));                                    
     Xr_2=abs(fft(xr_2.*w2,Nfft)/sum(w2));                                  
 
-    start=round(60/60/F);                                              
-    fine=round(180/60/F);                                              
+    start=round(1/60/F);                                              
+    fine=round(200/60/F);                                              
+    spectrum_denoised1 = Xr_1(start:fine);
+	spectrum_denoised2 = Xr_2(start:fine);
     [~, ind_pk_1]=findpeaks(Xr_1(start:fine),'sortstr','descend');      
     [~, ind_pk_2]=findpeaks(Xr_2(start:fine),'sortstr','descend');     
 
@@ -23,6 +25,8 @@ function[p1,p2]=frequency_analysis(ppg1,ppg2,xr_1,xr_2)
     w2=hann(length(ppg2))';                                                
     X1=abs(fft(ppg1.*w,Nfft)/sum(w));                                       
     X2=abs(fft(ppg2.*w2,Nfft)/sum(w2));                                    
+    spectrum1 = X1(start:fine);
+	spectrum2 = X2(start:fine);
     [~, ind1]=findpeaks(X1(start:fine),'sortstr','descend');             
     [~, ind2]=findpeaks(X2(start:fine),'sortstr','descend');              
 
