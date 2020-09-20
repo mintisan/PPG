@@ -3,10 +3,12 @@
 %        Instrumentation and Measurement Research Group       %
 %                    University of Padova                     %
 %-----------------------------%%-----------------------------%%
-function[res]=kalman_filter(z_ppg1,z_ppg2)
+function[res, s_res, gain_res, xpriori_res, Ppriori_res, ...
+    inn1_res, inn2_res, VAR1_res, VAR2_res, flag1_res, flag2_res, count_res] ...
+     =kalman_filter(z_ppg1,z_ppg2)
   
-    Q=4^2;                    
-    R=10^2;                      
+    Q=4^2;                  % 一直为 16
+    R=10^2;                 % 一直为 100     
     
     count=0;                           
     countmax=5;
@@ -15,11 +17,21 @@ function[res]=kalman_filter(z_ppg1,z_ppg2)
     xposteriori=(z_ppg1(1)+z_ppg1(1))/2;   
     res(1)=(z_ppg1(1)+z_ppg1(1))/2;        
     Pposteriori=0;                          
-        
+    s_res(1) = 0;
+    gain_res(1) = 0;
+    xpriori_res(1) = 0;
+    Ppriori_res(1) = 0;
+    inn1_res(1) = 0;
+    inn2_res(1) = 0;
+    VAR1_res(1) = 0;
+    VAR2_res(1) = 0;
+    flag1_res(1) = 0;
+    flag2_res(1) = 0;
+    count_res(1) = 0;
     for i=2:length(z_ppg1)
     
-        xpriori=xposteriori;               
-        Ppriori=Pposteriori+Q;
+        xpriori=xposteriori;               % 当前次的先验心率：上一次的后验心率
+        Ppriori=Pposteriori+Q;             % 当前次的先验置信度：
     
         S=Ppriori+R; 	
         gain=Ppriori/S; 
@@ -87,5 +99,16 @@ function[res]=kalman_filter(z_ppg1,z_ppg2)
         end
 
       res(i)=xposteriori(1);
+      s_res(i) = S;
+      gain_res(i) = gain;
+      xpriori_res(i) = xpriori;
+      Ppriori_res(i) = Ppriori;
+      inn1_res(i) = inn1;
+      inn2_res(i) = inn2;
+      VAR1_res(i) = VAR1;
+      VAR2_res(i) = VAR2;
+      flag1_res(i) = flag1;
+      flag2_res(i) = flag2;
+      count_res(i) = count;
     end
 end
